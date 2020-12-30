@@ -33,9 +33,9 @@ class SignUp extends React.Component{
                 email,
                 password
             )
-            console.log(user)
+            //console.log(user)
             //firestore related
-            await createUserProfileDocument(user,displayName)
+            await createUserProfileDocument(user,{displayName})
 
         }catch(error){
             console.log(error)

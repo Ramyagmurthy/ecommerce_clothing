@@ -3,8 +3,15 @@ import './header.styles.scss'
 import {Link} from 'react-router-dom'
 
 import {ReactComponent as Logo} from '../../assets/crwns.svg'
+import { auth } from '../../firebase/firebase.utils';
 
-//This special syntax allow react to know that it is a logo
+import CartIcon from '../cart-icon/cart-icon.component'
+
+import {connect} from 'react-redux'
+import CartDropDown from '../cart-dropdown/cart-dropdown.component';
+import { createStructuredSelector } from 'reselect';
+import { selectCartHidden } from '../../redux/cart/cart.selectors';
+import { selectCurrentUser } from '../../redux/user/user.selector';
 
 
 // import { ReactComponent as Logo }
@@ -17,18 +24,41 @@ import {ReactComponent as Logo} from '../../assets/crwns.svg'
 // https://facebook.github.io/create-react-app/docs/adding-images-fonts-and-files
 
 
-const Header = () => (
-    <div className = 'header'>
-        <Link className='logo-container' to='/'>
-            <Logo className = 'logo'/>
-        </Link>
-   
-        <div className = 'options'>
-            <Link className='option' to='/shop'>SHOP</Link>
-            <Link className='option' to='/contact'>CONTACT</Link>
-            <Link className='option' to='/signin'>SIGN IN</Link>
-        </div>
-    </div>
-)
+const Header = ({ currentUser, hidden }) =>  (
+    <div className='header'>
+            <Link className='logo-container' to='/'>
+                <Logo className='logo' />
+            </Link>
 
-export default Header;
+            <div className='options'>
+                <Link className='option' to='/shop'>SHOP</Link>
+                <Link className='option' to='/contact'>CONTACT</Link>
+
+                {currentUser ?
+                    <div className='option' onClick={ () => auth.signOut()}>SIGN OUT</div>
+                    :
+                    <Link className='option' to='/signin'>SIGN IN</Link>}
+                <CartIcon />
+
+            </div>
+            {hidden ? null : <CartDropDown />}
+
+        </div>
+    
+    
+   )
+//const mapStateToProps = ({user:{currentUser}, cart:{hidden}}) => ({
+    //currentUser: currentUser,
+    //hidden: hidden
+ //   currentUser,
+  //  hidden
+//})
+
+const mapStateToProps = createStructuredSelector({
+    currentUser:selectCurrentUser,
+    hidden:selectCartHidden
+})
+
+
+
+export default connect(mapStateToProps, null)(Header);
